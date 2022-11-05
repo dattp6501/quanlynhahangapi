@@ -40,36 +40,49 @@ public class DishAPI extends HttpServlet{
         JSONObject jsonResp = new JSONObject();
         try {
             String session = objReq.getString("session");
-            if(!FCheckSession.checkSession(session)){
+            int ok = FCheckSession.SessionFilter(session);
+            if(ok==0){
                 jsonResp.put("code",300);
                 jsonResp.put("description","chưa đăng nhập");
-            }else{
-                String name = objReq.getString("name");
-                DishDAO dDAO = new DishDAO();
-                if(!dDAO.connect()){
-                    jsonResp.put("code",300);
-                    jsonResp.put("description","không kết nối được CSDL");
-                }else{
-                    JSONObject jsonResult = new JSONObject();
-                    ArrayList<Object> listD = new ArrayList<>();
-                    for(Dish d : dDAO.get(name)){
-                        JSONObject jsonD = new JSONObject();
-                        jsonD.put("dish_id", d.getId());
-                        jsonD.put("dish_name", d.getTen());
-                        jsonD.put("dish_price", d.getGia());
-                        jsonD.put("dish_sizes", d.getSize());
-                        jsonD.put("dish_note",d.getMota());
-                        if(d.getAnh()!=null){
-                            jsonD.put("dish_image", d.getAnh());
-                        }
-                        listD.add(jsonD);
-                    }
-                    jsonResult.put("list",listD);
-                    jsonResp.put("result", jsonResult);
-                    jsonResp.put("code",200);
-                    jsonResp.put("description","Thành công");
-                }
+                writer.print(jsonResp);
+                writer.close();
+                return;
             }
+            if(ok==2){
+                jsonResp.put("code",700);
+                jsonResp.put("description","Hết phiên đăng nhập");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
+            String name = objReq.getString("name");
+            DishDAO dDAO = new DishDAO();
+            if(!dDAO.connect()){
+                jsonResp.put("code",300);
+                jsonResp.put("description","không kết nối được CSDL");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
+            JSONObject jsonResult = new JSONObject();
+            ArrayList<Object> listD = new ArrayList<>();
+            for(Dish d : dDAO.get(name)){
+                JSONObject jsonD = new JSONObject();
+                jsonD.put("dish_id", d.getId());
+                jsonD.put("dish_name", d.getTen());
+                jsonD.put("dish_price", d.getGia());
+                jsonD.put("dish_sizes", d.getSize());
+                jsonD.put("dish_note",d.getMota());
+                jsonD.put("dish_number", d.getNumber());
+                if(d.getAnh()!=null){
+                    jsonD.put("dish_image", d.getAnh());
+                }
+                listD.add(jsonD);
+            }
+            jsonResult.put("list",listD);
+            jsonResp.put("result", jsonResult);
+            jsonResp.put("code",200);
+            jsonResp.put("description","Thành công");
         } catch (Exception e) {
             jsonResp.put("code",300);
             jsonResp.put("description",e.getMessage());
@@ -85,46 +98,63 @@ public class DishAPI extends HttpServlet{
         JSONObject jsonResp = new JSONObject();
         try {
             String session = objReq.getString("session");
-            if(!FCheckSession.checkSession(session)){
+            int ok = FCheckSession.SessionFilter(session);
+            if(ok==0){
                 jsonResp.put("code",300);
                 jsonResp.put("description","chưa đăng nhập");
-            }else{
-                if(!FSessionManager.FCheckSessionManager(session)){
-                    jsonResp.put("code",500);
-                    jsonResp.put("description","không dủ quyền");
-                }else{
-                    // get list dish
-                    ArrayList<Dish> listD = new ArrayList<>();
-                    JSONArray jsonListDish = objReq.getJSONArray("list_dish");
-                    for(Object jsonD : jsonListDish){
-                        String name = ((JSONObject) jsonD).getString("name_dish");
-                        float price = ((JSONObject) jsonD).getFloat("price_dish");
-                        String sizes = ((JSONObject) jsonD).getString("sizes_dish");
-                        String anhBase64 = null;
-                        try {
-                            anhBase64 = ((JSONObject) jsonD).getString("image_dish");
-                        } catch (Exception e) {
-                        }
-                        String note = ((JSONObject) jsonD).getString("note");
-                        Dish dish = new Dish(name, note, sizes, price, anhBase64, -1);
-                        listD.add(dish);
-                    }
-                    //add list dish
-                    DishDAO dDAO = new DishDAO();
-                    if(!dDAO.connect()){
-                        jsonResp.put("code",300);
-                        jsonResp.put("description","không kết nối được CSDL");
-                    }else{
-                        if(!dDAO.add(listD)){
-                            jsonResp.put("code",300);
-                            jsonResp.put("description","không thêm được món mới");
-                        }else{
-                            jsonResp.put("code",200);
-                            jsonResp.put("description","Thành công");
-                        }
-                    }
-                }
+                writer.print(jsonResp);
+                writer.close();
+                return;
             }
+            if(ok==2){
+                jsonResp.put("code",700);
+                jsonResp.put("description","Hết phiên đăng nhập");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
+            if(!FSessionManager.FCheckSessionManager(session)){
+                jsonResp.put("code",500);
+                jsonResp.put("description","không dủ quyền");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
+            // dong goi list dish
+            ArrayList<Dish> listD = new ArrayList<>();
+            JSONArray jsonListDish = objReq.getJSONArray("list_dish");
+            for(Object jsonD : jsonListDish){
+                String name = ((JSONObject) jsonD).getString("name_dish");
+                float price = ((JSONObject) jsonD).getFloat("price_dish");
+                String sizes = ((JSONObject) jsonD).getString("sizes_dish");
+                String anhBase64 = null;
+                try {
+                    anhBase64 = ((JSONObject) jsonD).getString("image_dish");
+                } catch (Exception e) {
+                }
+                String note = ((JSONObject) jsonD).getString("note");
+                Dish dish = new Dish(name, note, sizes, price, anhBase64, -1);
+                listD.add(dish);
+            }
+            //add list dish data base
+            DishDAO dDAO = new DishDAO();
+            if(!dDAO.connect()){
+                jsonResp.put("code",300);
+                jsonResp.put("description","không kết nối được CSDL");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
+            if(!dDAO.add(listD)){
+                jsonResp.put("code",300);
+                jsonResp.put("description","không thêm được món mới");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
+            jsonResp.put("code",200);
+            jsonResp.put("description","Thành công");
+            
         } catch (Exception e) {
             jsonResp.put("code",300);
             jsonResp.put("description",e.getMessage());
@@ -138,47 +168,64 @@ public class DishAPI extends HttpServlet{
         JSONObject jsonResp = new JSONObject();
         try {
             String session = objReq.getString("session");
-            if(!FCheckSession.checkSession(session)){
+            int ok = FCheckSession.SessionFilter(session);
+            if(ok==0){
                 jsonResp.put("code",300);
                 jsonResp.put("description","chưa đăng nhập");
-            }else{
-                if(!FSessionManager.FCheckSessionManager(session)){
-                    jsonResp.put("code",500);
-                    jsonResp.put("description","không dủ quyền");
-                }else{
-                    // get list dish
-                    ArrayList<Dish> listD = new ArrayList<>();
-                    JSONArray jsonListDish = objReq.getJSONArray("list_dish");
-                    for(Object jsonD : jsonListDish){
-                        String name = ((JSONObject) jsonD).getString("name_dish");
-                        float price = ((JSONObject) jsonD).getFloat("price_dish");
-                        String sizes = ((JSONObject) jsonD).getString("sizes_dish");
-                        String anhBase64 = null;
-                        try {
-                            anhBase64 = ((JSONObject) jsonD).getString("image_dish");
-                        } catch (Exception e) {
-                        }
-                        String note = ((JSONObject) jsonD).getString("note");
-                        int id = ((JSONObject) jsonD).getInt("id_dish");
-                        Dish dish = new Dish(name, note, sizes, price, anhBase64, id);
-                        listD.add(dish);
-                    }
-                    //add list dish
-                    DishDAO dDAO = new DishDAO();
-                    if(!dDAO.connect()){
-                        jsonResp.put("code",300);
-                        jsonResp.put("description","không kết nối được CSDL");
-                    }else{
-                        if(!dDAO.updateDishs(listD)){
-                            jsonResp.put("code",300);
-                            jsonResp.put("description","không thêm được món mới");
-                        }else{
-                            jsonResp.put("code",200);
-                            jsonResp.put("description","Thành công");
-                        }
-                    }
-                }
+                writer.print(jsonResp);
+                writer.close();
+                return;
             }
+            if(ok==2){
+                jsonResp.put("code",700);
+                jsonResp.put("description","Hết phiên đăng nhập");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
+            if(!FSessionManager.FCheckSessionManager(session)){
+                jsonResp.put("code",500);
+                jsonResp.put("description","không dủ quyền");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
+            // dong goi list dish
+            ArrayList<Dish> listD = new ArrayList<>();
+            JSONArray jsonListDish = objReq.getJSONArray("list_dish");
+            for(Object jsonD : jsonListDish){
+                String name = ((JSONObject) jsonD).getString("name_dish");
+                float price = ((JSONObject) jsonD).getFloat("price_dish");
+                String sizes = ((JSONObject) jsonD).getString("sizes_dish");
+                String anhBase64 = null;
+                try {
+                    anhBase64 = ((JSONObject) jsonD).getString("image_dish");
+                } catch (Exception e) {
+                }
+                String note = ((JSONObject) jsonD).getString("note");
+                int id = ((JSONObject) jsonD).getInt("id_dish");
+                Dish dish = new Dish(name, note, sizes, price, anhBase64, id);
+                listD.add(dish);
+            }
+            //add list dish data base
+            DishDAO dDAO = new DishDAO();
+            if(!dDAO.connect()){
+                jsonResp.put("code",300);
+                jsonResp.put("description","không kết nối được CSDL");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
+            if(!dDAO.updateDishs(listD)){
+                jsonResp.put("code",300);
+                jsonResp.put("description","không cập nhật được món");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
+            jsonResp.put("code",200);
+            jsonResp.put("description","Thành công");
+            
         } catch (Exception e) {
             jsonResp.put("code",300);
             jsonResp.put("description",e.getMessage());

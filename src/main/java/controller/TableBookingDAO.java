@@ -8,7 +8,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
 import model.entity.Table;
 import model.entity.BookingDish;
 import model.entity.BookingSchedule;
@@ -49,19 +48,50 @@ public class TableBookingDAO extends DAO{
         }
         ok = true;
         // update dish
-        if(tb.getDishs().size()>0){
-            BookingDishDAO bdDAO = new BookingDishDAO();
-            bdDAO.setConnection(connection);
-            for(BookingDish bd : tb.getDishs()){
-                if(!bdDAO.add(bd,tb)){
-                    connection.rollback();
-                    ok = false;
-                    break;
-                }
-                // add booking dish success
-                ok = true;
-            }
+        // if(tb.getDishs().size()>0){
+        //     BookingDishDAO bdDAO = new BookingDishDAO();
+        //     bdDAO.setConnection(connection);
+        //     ok = bdDAO.add(tb.getDishs(), tb);
+        // }
+        // if(ok){
+        //     connection.setAutoCommit(true);
+        // }else{
+        //     connection.rollback();
+        // }
+        return ok;
+    }
+
+    private boolean update(TableBooking TB) throws SQLException{
+        // connection.setAutoCommit(false);
+        boolean ok = false;
+        //add booking dish
+        BookingDishDAO BDDAO = new BookingDishDAO(); BDDAO.setConnection(connection);
+        if(!BDDAO.add(TB.getDishs(), TB)){
+            connection.rollback();
+            ok = false;
+            return ok;
         }
+        //
+        // connection.setAutoCommit(true);
+        ok = true;
+        return ok;
+    }
+
+    public boolean update(ArrayList<TableBooking> list) throws SQLException{
+        // connection.setAutoCommit(false);
+        boolean ok = false;
+        for(TableBooking TB: list){
+            if(!update(TB)){
+                ok = false;
+                break;
+            }
+            ok = true;
+        }
+        // if(ok){
+        //     connection.setAutoCommit(true);
+        // }else{
+        //     connection.rollback();
+        // }
         return ok;
     }
 
@@ -89,8 +119,11 @@ public class TableBookingDAO extends DAO{
             Table table = new Table(); table.setId(tableId);
             TableDAO TDAO = new TableDAO(); TDAO.setConnection(connection);
             TDAO.getTableByID(table);
-            //
             TableBooking tb = new TableBooking(id, time, price, note, table, startTime, new ArrayList<BookingDish>());
+            //booking dish
+            BookingDishDAO BDDAO = new BookingDishDAO();
+            BDDAO.setConnection(connection);
+            BDDAO.get(tb);
             bs.getTableBooking().add(tb);
         }
         return ok;

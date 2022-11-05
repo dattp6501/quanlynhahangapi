@@ -18,4 +18,7 @@ public class ImageCustom {
     public static String toStringBase64(String path) throws IOException{
         return Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(new File(path)));
     }
+    public static byte[] Base64ToBytes(String base64){
+        return Base64.getDecoder().decode(base64);
+    }
 }

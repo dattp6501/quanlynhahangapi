@@ -17,6 +17,62 @@ public class BookingScheduleDAO extends DAO{
     public BookingScheduleDAO(){
         super();
     }
+
+    public ArrayList<BookingSchedule> get(Customer customer, Date startTime, Date endTime) throws SQLException{
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        ArrayList<BookingSchedule> list = new ArrayList<>();
+        String select = "SELECT * FROM lichdat where khachhangid = ?";
+        PreparedStatement ps = connection.prepareStatement(select);
+        ps.setInt(1, customer.getId());
+        ResultSet res = ps.executeQuery();
+        while(res.next()){
+            int id = res.getInt(1);
+            Date date = null;
+            try {
+                date = format.parse(res.getString(2));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            float depositMoney = res.getFloat(3);
+            String note = res.getString(4);
+            BookingSchedule bs = new BookingSchedule(id, date, depositMoney, note, customer, new ArrayList<TableBooking>());
+            // get table booking
+            TableBookingDAO TBDAO = new TableBookingDAO();
+            TBDAO.setConnection(connection);
+            TBDAO.getTableBooking(bs);
+            list.add(bs);
+        }
+        return list;
+    }
+
+    public BookingSchedule getByID(Customer customer, int BSId, Date startTime, Date endTime) throws SQLException{
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        BookingSchedule bs = null;
+        String select = "SELECT * FROM lichdat where khachhangid=? and id=?";
+        PreparedStatement ps = connection.prepareStatement(select);
+        ps.setInt(1, customer.getId());
+        ps.setInt(2, BSId);
+        ResultSet res = ps.executeQuery();
+        if(res.next()){
+            int id = res.getInt("id");
+            Date date = null;
+            try {
+                date = format.parse(res.getString("ngay"));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            float depositMoney = res.getFloat(3);
+            String note = res.getString(4);
+            // get table booking
+            bs = new BookingSchedule(id, date, depositMoney, note, customer, new ArrayList<TableBooking>());
+            TableBookingDAO TBDAO = new TableBookingDAO();
+            TBDAO.setConnection(connection);
+            TBDAO.getTableBooking(bs);
+        }
+        res.close();
+        return bs;
+    }
+
     public boolean add(BookingSchedule bs) throws SQLException{
         boolean ok = false;
         connection.setAutoCommit(false);
@@ -52,30 +108,18 @@ public class BookingScheduleDAO extends DAO{
         return ok;
     }
 
-    public ArrayList<BookingSchedule> get(Customer customer, Date startTime, Date endTime) throws SQLException{
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        ArrayList<BookingSchedule> list = new ArrayList<>();
-        String select = "SELECT * FROM lichdat where khachhangid = ?";
-        PreparedStatement ps = connection.prepareStatement(select);
-        ps.setInt(1, customer.getId());
-        ResultSet res = ps.executeQuery();
-        while(res.next()){
-            int id = res.getInt(1);
-            Date date = null;
-            try {
-                date = format.parse(res.getString(2));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            float depositMoney = res.getFloat(3);
-            String note = res.getString(4);
-            BookingSchedule bs = new BookingSchedule(id, date, depositMoney, note, customer, new ArrayList<TableBooking>());
-            // get table booking
-            TableBookingDAO TBDAO = new TableBookingDAO();
-            TBDAO.setConnection(connection);
-            TBDAO.getTableBooking(bs);
-            list.add(bs);
+    public boolean update(BookingSchedule BS) throws SQLException{
+        connection.setAutoCommit(false);
+        boolean ok = false;
+        //update booking table
+        TableBookingDAO TBDAO = new TableBookingDAO(); TBDAO.setConnection(connection);
+        if(!TBDAO.update(BS.getTableBooking())){
+            connection.rollback();
+            ok = false;
+            return ok;
         }
-        return list;
+        connection.setAutoCommit(true);
+        ok = true;
+        return ok;
     }
 }

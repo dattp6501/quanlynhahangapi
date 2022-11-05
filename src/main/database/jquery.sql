@@ -47,7 +47,8 @@ insert into lichdat(ngay,tiencoc,mota,khachhangid) values(?,?,?,?);
 insert into bandat(gia,batdau,thoiluong,mota,banid) values(?,?,?,?,?);
 insert into mondat() values();
 delete from thoigiantrong where id = ?;
-
+-- ----------------------------booking dish -------------------------------
+insert into mondat(soluong,gia,size,mota,modid,bandatid) values(?,?,?,?,?,?);
 
 -- ----------------------- dish---------------
 insert into mon(ten,gia,size,anh,mota) values(?,?,?,?,?);

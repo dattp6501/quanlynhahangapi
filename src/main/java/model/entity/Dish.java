@@ -3,24 +3,34 @@ package model.entity;
 import java.util.Base64;
 
 public class Dish {
-    private String ten,mota,size,anh;
-    private double gia;
-    private int id;
-    public Dish(String ten, String mota, String size, double gia, byte[] anh, int id) {
-        this.ten = ten;
-        this.mota = mota;
+    private String name,note,size,image;
+    private double price;
+    private int id, number;
+    public Dish(String name, String note, String size, double price, byte[] image, int id) {
+        this.name = name;
+        this.note = note;
         this.size = size;
-        this.gia = gia;
-        this.anh = Base64.getEncoder().encodeToString(anh);
+        this.price = price;
+        this.image = Base64.getEncoder().encodeToString(image);
         this.id = id;
     }
-    public Dish(String ten, String mota, String size, double gia, String anhBase64, int id) {
-        this.ten = ten;
-        this.mota = mota;
+    public Dish(String name, String note, String size, double price, String anhBase64, int id) {
+        this.name = name;
+        this.note = note;
         this.size = size;
-        this.gia = gia;
-        this.anh = anhBase64;
+        this.price = price;
+        this.image = anhBase64;
         this.id = id;
+    }
+
+    public Dish(int id, String name, int number, String size, double price, String anhBase64, String note) {
+        this.name = name;
+        this.note = note;
+        this.size = size;
+        this.price = price;
+        this.image = anhBase64;
+        this.id = id;
+        this.number = number;
     }
 
     public Dish() {
@@ -28,16 +38,16 @@ public class Dish {
     }
 
     public String getTen() {
-        return ten;
+        return name;
     }
-    public void setTen(String ten) {
-        this.ten = ten;
+    public void setTen(String name) {
+        this.name = name;
     }
     public String getMota() {
-        return mota;
+        return note;
     }
-    public void setMota(String mota) {
-        this.mota = mota;
+    public void setMota(String note) {
+        this.note = note;
     }
     public String getSize() {
         return size;
@@ -46,20 +56,20 @@ public class Dish {
         this.size = size;
     }
     public double getGia() {
-        return gia;
+        return price;
     }
-    public void setGia(double gia) {
-        this.gia = gia;
+    public void setGia(double price) {
+        this.price = price;
     }
     public String getAnh() {
-        return anh;
+        return image;
     }
-    public void setAnh(byte[] anh) {
-        this.anh = Base64.getEncoder().encodeToString(anh);
+    public void setAnh(byte[] image) {
+        this.image = Base64.getEncoder().encodeToString(image);
     }
 
-    public void setAnh(String anhBase64) {
-        this.anh = anhBase64;
+    public void setAnh(String imageBase64) {
+        this.image = imageBase64;
     }
 
     public int getId() {
@@ -70,9 +80,17 @@ public class Dish {
         this.id = id;
     }
 
+    public int getNumber() {
+        return number;
+    }
+    
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
     @Override
     public String toString() {
-        return "Mon [ten=" + ten + ", mota=" + mota + ", size=" + size + ", gia=" + gia + ", anh="
-                + anh + ", id=" + id + "]";
+        return "Mon [ten=" + name + ", mota=" + note + ", size=" + size + ", gia=" + price + ", anh="
+                + image + ", id=" + id + ", soluong=" + number + "]";
     }
 }

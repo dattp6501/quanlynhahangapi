@@ -76,7 +76,7 @@ public class TableDAO extends DAO{
 
     public ArrayList<Table> getAllTable(String name, int limit) throws SQLException{
         ArrayList<Table> list = new ArrayList<>();
-        String sql = "select * from ban where ten=? ";
+        String sql = "select * from ban where ten like ? ";
         if(limit>0){
             sql += "limit ? ";
         }
