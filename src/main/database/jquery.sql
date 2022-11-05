@@ -35,9 +35,9 @@ where id=?;
 -- ---------------------booking table-----------------
 --    Step 1: get id table free
 select banid,id,batdau,ketthuc from thoigiantrong 
-where batdau<='2022-10-17 16:59:00' and '2022-10-17 23:59:00'<=ketthuc;
+where batdau<='2022-10-17 16:59:00' and '2022-12-31 23:59:00'<=ketthuc;
 select banid,id,batdau,ketthuc from thoigiantrong 
-where '2022-10-17 10:00:00'<=ketthuc;
+where '2022-12-31 23:59:00'<=ketthuc;
 --    Step 2: get table
 select * from ban where id = 1;
 --    Step 3: get list freetime

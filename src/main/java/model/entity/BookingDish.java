@@ -4,10 +4,10 @@ public class BookingDish {
     private int id,number;
     private float price;
     private String size,note;
-    private Mon dish;
+    private Dish dish;
     public BookingDish() {
     }
-    public BookingDish(int id, int number, float price, String size, String note, Mon dish) {
+    public BookingDish(int id, int number, float price, String size, String note, Dish dish) {
         this.id = id;
         this.number = number;
         this.price = price;
@@ -45,10 +45,10 @@ public class BookingDish {
     public void setNote(String note) {
         this.note = note;
     }
-    public Mon getDish() {
+    public Dish getDish() {
         return dish;
     }
-    public void setDish(Mon dish) {
+    public void setDish(Dish dish) {
         this.dish = dish;
     }
 }

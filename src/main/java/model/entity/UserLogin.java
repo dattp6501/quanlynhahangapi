@@ -7,8 +7,8 @@ import global.InitVariable;
 public class UserLogin {
     private String session;
     private long time = new Date().getTime() + InitVariable.time;
-    private KhachHang kh;
-    public UserLogin(String session, KhachHang kh) {
+    private Customer kh;
+    public UserLogin(String session, Customer kh) {
         this.session = session;
         this.kh = kh;
     }
@@ -29,10 +29,10 @@ public class UserLogin {
     public void setTime(long time) {
         this.time = time;
     }
-    public KhachHang getKh() {
+    public Customer getKh() {
         return kh;
     }
-    public void setKh(KhachHang kh) {
+    public void setKh(Customer kh) {
         this.kh = kh;
     }
     @Override

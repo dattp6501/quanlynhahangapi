@@ -2,12 +2,12 @@ package model.entity;
 
 public class MemberGroup {
     private int id;
-    private ThanhVien member;
+    private Member member;
     private Group group;
     public MemberGroup() {
         super();
     }
-    public MemberGroup(int id, ThanhVien member, Group group) {
+    public MemberGroup(int id, Member member, Group group) {
         this.id = id;
         this.member = member;
         this.group = group;
@@ -18,10 +18,10 @@ public class MemberGroup {
     public void setId(int id) {
         this.id = id;
     }
-    public ThanhVien getMember() {
+    public Member getMember() {
         return member;
     }
-    public void setMember(ThanhVien member) {
+    public void setMember(Member member) {
         this.member = member;
     }
     public Group getGroup() {

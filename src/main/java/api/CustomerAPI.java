@@ -3,6 +3,7 @@ package api;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.UUID;
 import javax.servlet.ServletException;
@@ -13,10 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 import api.filters.FCheckSession;
-import controller.user.CustomerDAO;
-import controller.user.MemberDAO;
+import controller.CustomerDAO;
+import controller.MemberDAO;
 import global.InitVariable;
-import model.entity.KhachHang;
+import model.entity.Customer;
 import model.entity.UserLogin;
 import utils.JsonCustom;
 
@@ -43,37 +44,46 @@ public class CustomerAPI extends HttpServlet{
         JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         JSONObject resp1 = new JSONObject();
         try {
-            String tendangnhap = objReq.getString("tendangnhap");
-            String matkhau = objReq.getString("matkhau");
-            KhachHang customer = new KhachHang(tendangnhap,matkhau,null,-1,null,null,null);
+            String usenname = objReq.getString("tendangnhap");
+            String password = objReq.getString("matkhau");
+            Customer customer = new Customer(usenname,password,null,-1,null,null,null);
             CustomerDAO cusdao = new CustomerDAO();
-            if(cusdao.connect()){
-                if(!cusdao.kiemTraDangNhap(customer)) {// tai khoan hoac mat khau sai
-                    resp1.put("code", 401);
-                    resp1.put("description","Sai tên đăng nhập hoặc mật khẩu");
-                } else {// tai khoan mat khau dung
-                    UserLogin newUser = new UserLogin(null,customer);
-                    if(!addUserToListUserLogin(newUser)){
-                        resp1.put("code",503);
-                        resp1.put("description","Hệ thống đang quá tải! vui lòng vào lại sau ít phút :)");
-                    }else{
-                        if(checkPermission(newUser, cusdao.getConnection())){
-                            newUser.setSession(generateSession(InitVariable.ListUserLogin));
-                            writeUserLogIn(newUser);
-                            resp1.put("code",200);
-                            resp1.put("description", "Đăng nhập thành công");
-                            resp1.put("session", newUser.getSession());
-                        }else{
-                            resp1.put("code",500);
-                            resp1.put("description", "Không có quyền đăng nhập");
-                        }
-                    }
-                }
-                cusdao.close();
-            }else{
+            if(!cusdao.connect()){
                 resp1.put("code",500);
                 resp1.put("description","Không kết nối được CSDL");
+                writer.println(resp1.toString());
+                writer.close();
+                return;
             }
+            if(!cusdao.kiemTraDangNhap(customer)) {// tai khoan hoac mat khau sai
+                resp1.put("code", 401);
+                resp1.put("description","Sai tên đăng nhập hoặc mật khẩu");
+                writer.println(resp1.toString());
+                writer.close();
+                return;
+            }
+            // tai khoan mat khau dung
+            UserLogin newUser = new UserLogin(null,customer);
+            if(!addUserToListUserLogin(newUser)){
+                resp1.put("code",503);
+                resp1.put("description","Hệ thống đang quá tải! vui lòng vào lại sau ít phút :)");
+                writer.println(resp1.toString());
+                writer.close();
+                return;
+            }
+            if(!checkPermission(newUser, cusdao.getConnection())){
+                resp1.put("code",500);
+                resp1.put("description", "Không có quyền đăng nhập");
+                writer.println(resp1.toString());
+                writer.close();
+                return;
+            }
+            newUser.setSession(generateSession(InitVariable.ListUserLogin));
+            writeUserLogIn(newUser);
+            resp1.put("code",200);
+            resp1.put("description", "Đăng nhập thành công");
+            resp1.put("session", newUser.getSession());
+            cusdao.close();
         } catch (Exception e) {
             resp1.put("code",300);
             resp1.put("description",e.getMessage());
@@ -81,7 +91,7 @@ public class CustomerAPI extends HttpServlet{
         writer.println(resp1.toString());
         writer.close();
     }
-    private boolean checkPermission(UserLogin userLogin, Connection connection){
+    private boolean checkPermission(UserLogin userLogin, Connection connection) throws SQLException{
         MemberDAO memDAO = new MemberDAO();
         memDAO.setConnection(connection);
         if(!memDAO.checkGroup(userLogin.getKh())){
@@ -102,7 +112,7 @@ public class CustomerAPI extends HttpServlet{
     }
     private boolean writeUserLogIn(Object user){
         try {
-            KhachHang customer = (KhachHang) user;
+            Customer customer = (Customer) user;
             System.out.println(customer);
         } catch (Exception e) {
         }
@@ -114,27 +124,31 @@ public class CustomerAPI extends HttpServlet{
         JSONObject objReq =new JSONObject(JsonCustom.JsonToString(req.getReader()).toString());
         JSONObject resp1 = new JSONObject();
         try {
-            String tendaydu = objReq.getString("tendaydu");
-            String tendangnhap = objReq.getString("tendangnhap");
-            String matkhau = objReq.getString("matkhau");
-            String diachi = objReq.getString("diachi");
-            String sdt = objReq.getString("sdt");
-            KhachHang customerReq = new KhachHang(tendangnhap, matkhau, tendaydu,-1, sdt, diachi, null);
+            String fullname = objReq.getString("tendaydu");
+            String username = objReq.getString("tendangnhap");
+            String password = objReq.getString("matkhau");
+            String address = objReq.getString("diachi");
+            String mobile = objReq.getString("sdt");
+            Customer customerReq = new Customer(username, password, fullname,-1, mobile, address, null);
             CustomerDAO cusdao = new CustomerDAO();
-            if(cusdao.connect()){// connect database success
-                if(!cusdao.themKhachhang(customerReq)){
-                    resp1.put("code",300);
-                    resp1.put("description","Không đăng kí được");
-                }else{
-                    resp1.put("code",200);
-                    resp1.put("description","Đăng kí thành công");
-                }
-                cusdao.close();
-            }else{// connect DB error
+            if(!cusdao.connect()){// connect DB error
                 resp1.put("code",500);
                 resp1.put("description","Không kết nối được CSDL");
+                writer.println(resp1.toString());
+                writer.close();
+                return;
+            }
+            // connect database success
+            if(!cusdao.add(customerReq)){
+                resp1.put("code",300);
+                resp1.put("description","Không đăng kí được");
+                writer.println(resp1.toString());
+                writer.close();
+                return;
             }
             cusdao.close();
+            resp1.put("code",200);
+            resp1.put("description","Đăng kí thành công");
         } catch (Exception e) {
             resp1.put("code",300);
             resp1.put("description",e.getMessage());
@@ -149,18 +163,30 @@ public class CustomerAPI extends HttpServlet{
         JSONObject resp1 = new JSONObject();
         try {
             String session = objReq.getString("session");
-            if(!FCheckSession.checkSession(session)){
+            int ok = FCheckSession.SessionFilter(session);
+            if(ok==0){
                 resp1.put("code", 700);
                 resp1.put("description", "Người dùng chưa đăng nhập");
-            }else{
-                if(logout(session)){
-                    resp1.put("code",200);
-                    resp1.put("description","Đăng xuất thành công");
-                }else{
-                    resp1.put("code",300);
-                    resp1.put("description","Đăng xuất thất bại");
-                }
+                writer.println(resp1.toString());
+                writer.close();
+                return;
             }
+            if(ok == 2){
+                resp1.put("code",200);
+                resp1.put("description","Đăng xuất thành công");
+                writer.println(resp1.toString());
+                writer.close();
+                return;
+            }
+            if(!logout(session)){
+                resp1.put("code",300);
+                resp1.put("description","Đăng xuất thất bại");
+                writer.println(resp1.toString());
+                writer.close();
+                return;
+            }
+            resp1.put("code",200);
+            resp1.put("description","Đăng xuất thành công");
         }catch (Exception e) {
             resp1.put("code",300);
             resp1.put("description",e.getMessage());

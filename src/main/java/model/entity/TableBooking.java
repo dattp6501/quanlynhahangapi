@@ -7,11 +7,12 @@ public class TableBooking {
     private int id,time;
     private float price;
     private String note;
-    private Ban table;
+    private Table table;
     private Date startTime;
     private ArrayList<BookingDish> dishs;
-    public TableBooking(int id, int time, float price, String note, Ban table, Date startTime,
-            ArrayList<BookingDish> dishs) {
+    public TableBooking() {
+    }
+    public TableBooking(int id, int time, float price, String note, Table table, Date startTime, ArrayList<BookingDish> dishs) {
         this.id = id;
         this.time = time;
         this.price = price;
@@ -19,8 +20,6 @@ public class TableBooking {
         this.table = table;
         this.startTime = startTime;
         this.dishs = dishs;
-    }
-    public TableBooking() {
     }
     public int getId() {
         return id;
@@ -46,10 +45,10 @@ public class TableBooking {
     public void setNote(String note) {
         this.note = note;
     }
-    public Ban getTable() {
+    public Table getTable() {
         return table;
     }
-    public void setTable(Ban table) {
+    public void setTable(Table table) {
         this.table = table;
     }
     public ArrayList<BookingDish> getDishs() {

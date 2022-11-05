@@ -33,7 +33,7 @@ public class FCheckSession implements Filter{
         JSONObject resp1 = new JSONObject();
         try {
             String session = reqJson.getString("session");
-            int ok = checkSession1(session);
+            int ok = SessionFilter(session);
             if(ok == 0){// da dang nhap hop le
                 resp1.put("code", 700);
                 resp1.put("description", "Hết phiên đăng nhập");
@@ -57,20 +57,21 @@ public class FCheckSession implements Filter{
         return InitVariable.ListUserLogin.contains(user);
     }
 
-    public static int checkSession1(String session){
+    public static int SessionFilter(String session){
         //0 chua dang nhap
         //1 thanh cong
         //2 session het thoi gian
         UserLogin user = new UserLogin(session,null);
         int index = InitVariable.ListUserLogin.indexOf(user);
-        user = InitVariable.ListUserLogin.get(index);
-        if(user == null){
+        if(index < 0){
             return 0;
         }
+        user = InitVariable.ListUserLogin.get(index);
         long time_current = new Date().getTime();
         if(time_current<user.getTime()){
             return 1;
         }
+        InitVariable.ListUserLogin.remove(user);
         return 2;
     }
 
@@ -79,14 +80,6 @@ public class FCheckSession implements Filter{
         UserLogin userLogin = InitVariable.ListUserLogin.get(index);
         ArrayList<Permission> permissions = userLogin.getKh().getGroup().getPermissions();
         return permissions.contains(new Permission(6, "MANAGER_ALL_GROUP", ""));
-    }
-
-    public static boolean FCheckSessionManager(String session){
-        int index = InitVariable.ListUserLogin.indexOf(new UserLogin(session, null));
-        UserLogin userLogin = InitVariable.ListUserLogin.get(index);
-        ArrayList<Permission> permissions = userLogin.getKh().getGroup().getPermissions();
-        return permissions.contains(new Permission(2, "MANAGER_TABLE", ""))
-        &&permissions.contains(new Permission(3, "MANAGER_DISH", ""));
     }
 
     public static void main(String[] args) {

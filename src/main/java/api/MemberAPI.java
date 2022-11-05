@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 import api.filters.FCheckSession;
-import controller.user.MemberDAO;
+import controller.MemberDAO;
 import global.InitVariable;
 import model.entity.Group;
 import model.entity.Permission;
-import model.entity.ThanhVien;
+import model.entity.Member;
 import model.entity.UserLogin;
 import utils.JsonCustom;
 
@@ -36,43 +36,55 @@ public class MemberAPI extends HttpServlet{
         JSONObject resp1 = new JSONObject();
         JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         try {
-            // int mem_id = objReq.getInt("mem_id");
             String session = objReq.getString("session");
-            if(!FCheckSession.checkSession(session)){
+            int ok = FCheckSession.SessionFilter(session);
+            if(ok==0){
                 resp1.put("code", 700);
                 resp1.put("description", "Người dùng chưa đăng nhập");
-            }else{
-                MemberDAO memdao = new MemberDAO();
-                if(!memdao.connect()){
-                    resp1.put("code",500);
-                    resp1.put("description","Không kết nối được CSDL");
-                }else{
-                    //lay thong tin thanh vien trong danh sach user dang dang nhap tren server
-                    ThanhVien member = new ThanhVien();
-                    UserLogin user = new UserLogin(session,null);
-                    int index = InitVariable.ListUserLogin.indexOf(user);
-                    UserLogin userLogin = InitVariable.ListUserLogin.get(index);
-                    member.setId(userLogin.getKh().getId());
-                    // lay  nhom cua user
-                    memdao.checkGroup(member);
-                    // tra ket qua cho client
-                    resp1.put("code",200);
-                    resp1.put("description","Thành công");
-                    JSONObject result = new JSONObject();
-                    result.put("mem_id", member.getId());
-                    result.put("mem_fullname", userLogin.getKh().getTendaydu());
-                    result.put("mem_username", userLogin.getKh().getTendangnhap());
-                    for(Group g : member.getGroups()){
-                        JSONObject jsonGroup = new JSONObject();
-                        for(Permission p: g.getPermissions()){
-                            jsonGroup.put("is_"+p.getName().toLowerCase(), true);
-                        }
-                        result.put(g.getName().toLowerCase(), jsonGroup);
-                    }
-                    resp1.put("result", result);
-                    memdao.close();
-                }
+                writer.println(resp1.toString());
+                writer.close();
+                return;
             }
+            if(ok==2){
+                resp1.put("code", 700);
+                resp1.put("description", "Hết phiên đăng nhập");
+                writer.println(resp1.toString());
+                writer.close();
+                return;
+            }
+            MemberDAO memdao = new MemberDAO();
+            if(!memdao.connect()){
+                resp1.put("code",500);
+                resp1.put("description","Không kết nối được CSDL");
+                writer.println(resp1.toString());
+                writer.close();
+                return;
+            }
+            //lay thong tin thanh vien trong danh sach user dang dang nhap tren server
+            Member member = new Member();
+            UserLogin user = new UserLogin(session,null);
+            int index = InitVariable.ListUserLogin.indexOf(user);
+            UserLogin userLogin = InitVariable.ListUserLogin.get(index);
+            member.setId(userLogin.getKh().getId());
+            // lay  nhom cua user
+            memdao.checkGroup(member);
+            memdao.close();
+            // tra ket qua cho client
+            resp1.put("code",200);
+            resp1.put("description","Thành công");
+            JSONObject result = new JSONObject();
+            result.put("mem_id", member.getId());
+            result.put("mem_fullname", userLogin.getKh().getTendaydu());
+            result.put("mem_username", userLogin.getKh().getTendangnhap());
+            for(Group g : member.getGroups()){
+                JSONObject jsonGroup = new JSONObject();
+                for(Permission p: g.getPermissions()){
+                    jsonGroup.put("is_"+p.getName().toLowerCase(), true);
+                }
+                result.put(g.getName().toLowerCase(), jsonGroup);
+            }
+            resp1.put("result", result);
+            
         } catch (Exception e) {
             resp1.put("code",300);
             resp1.put("description",e.getMessage());

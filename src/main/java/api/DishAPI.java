@@ -11,8 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import api.filters.FCheckSession;
-import controller.dish.DishDAO;
-import model.entity.Mon;
+import api.filters.FSessionManager;
+import controller.DishDAO;
+import model.entity.Dish;
 import utils.JsonCustom;
 
 
@@ -51,7 +52,7 @@ public class DishAPI extends HttpServlet{
                 }else{
                     JSONObject jsonResult = new JSONObject();
                     ArrayList<Object> listD = new ArrayList<>();
-                    for(Mon d : dDAO.get(name)){
+                    for(Dish d : dDAO.get(name)){
                         JSONObject jsonD = new JSONObject();
                         jsonD.put("dish_id", d.getId());
                         jsonD.put("dish_name", d.getTen());
@@ -88,12 +89,12 @@ public class DishAPI extends HttpServlet{
                 jsonResp.put("code",300);
                 jsonResp.put("description","chưa đăng nhập");
             }else{
-                if(!FCheckSession.FCheckSessionManager(session)){
+                if(!FSessionManager.FCheckSessionManager(session)){
                     jsonResp.put("code",500);
                     jsonResp.put("description","không dủ quyền");
                 }else{
                     // get list dish
-                    ArrayList<Mon> listD = new ArrayList<>();
+                    ArrayList<Dish> listD = new ArrayList<>();
                     JSONArray jsonListDish = objReq.getJSONArray("list_dish");
                     for(Object jsonD : jsonListDish){
                         String name = ((JSONObject) jsonD).getString("name_dish");
@@ -105,7 +106,7 @@ public class DishAPI extends HttpServlet{
                         } catch (Exception e) {
                         }
                         String note = ((JSONObject) jsonD).getString("note");
-                        Mon dish = new Mon(name, note, sizes, price, anhBase64, -1);
+                        Dish dish = new Dish(name, note, sizes, price, anhBase64, -1);
                         listD.add(dish);
                     }
                     //add list dish
@@ -141,12 +142,12 @@ public class DishAPI extends HttpServlet{
                 jsonResp.put("code",300);
                 jsonResp.put("description","chưa đăng nhập");
             }else{
-                if(!FCheckSession.FCheckSessionManager(session)){
+                if(!FSessionManager.FCheckSessionManager(session)){
                     jsonResp.put("code",500);
                     jsonResp.put("description","không dủ quyền");
                 }else{
                     // get list dish
-                    ArrayList<Mon> listD = new ArrayList<>();
+                    ArrayList<Dish> listD = new ArrayList<>();
                     JSONArray jsonListDish = objReq.getJSONArray("list_dish");
                     for(Object jsonD : jsonListDish){
                         String name = ((JSONObject) jsonD).getString("name_dish");
@@ -159,7 +160,7 @@ public class DishAPI extends HttpServlet{
                         }
                         String note = ((JSONObject) jsonD).getString("note");
                         int id = ((JSONObject) jsonD).getInt("id_dish");
-                        Mon dish = new Mon(name, note, sizes, price, anhBase64, id);
+                        Dish dish = new Dish(name, note, sizes, price, anhBase64, id);
                         listD.add(dish);
                     }
                     //add list dish

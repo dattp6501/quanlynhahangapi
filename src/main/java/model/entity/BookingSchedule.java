@@ -8,11 +8,11 @@ public class BookingSchedule {
     private Date date;
     private float depositMoney;
     private String note;
-    private KhachHang customer;
+    private Customer customer;
     private ArrayList<TableBooking> tableBooking;
     public BookingSchedule() {
     }
-    public BookingSchedule(int id, Date date, float depositMoney, String note, KhachHang customer,
+    public BookingSchedule(int id, Date date, float depositMoney, String note, Customer customer,
             ArrayList<TableBooking> tableBooking) {
         this.id = id;
         this.date = date;
@@ -45,10 +45,10 @@ public class BookingSchedule {
     public void setNote(String note) {
         this.note = note;
     }
-    public KhachHang getCustomer() {
+    public Customer getCustomer() {
         return customer;
     }
-    public void setCustomer(KhachHang customer) {
+    public void setCustomer(Customer customer) {
         this.customer = customer;
     }
     public ArrayList<TableBooking> getTableBooking() {
