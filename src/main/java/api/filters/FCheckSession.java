@@ -54,7 +54,7 @@ public class FCheckSession implements Filter{
 
     public static boolean checkSession(String session){
         UserLogin user = new UserLogin(session,null);
-        return InitVariable.ListUserLogin.contains(user);
+        return InitVariable.LIST_USER_LOGIN.contains(user);
     }
 
     public static int SessionFilter(String session){
@@ -62,22 +62,22 @@ public class FCheckSession implements Filter{
         //1 thanh cong
         //2 session het thoi gian
         UserLogin user = new UserLogin(session,null);
-        int index = InitVariable.ListUserLogin.indexOf(user);
+        int index = InitVariable.LIST_USER_LOGIN.indexOf(user);
         if(index < 0){
             return 0;
         }
-        user = InitVariable.ListUserLogin.get(index);
+        user = InitVariable.LIST_USER_LOGIN.get(index);
         long time_current = new Date().getTime();
         if(time_current<user.getTime()){
             return 1;
         }
-        InitVariable.ListUserLogin.remove(user);
+        InitVariable.LIST_USER_LOGIN.remove(user);
         return 2;
     }
 
     public static boolean FCheckSessionAdmin(String session){
-        int index = InitVariable.ListUserLogin.indexOf(new UserLogin(session, null));
-        UserLogin userLogin = InitVariable.ListUserLogin.get(index);
+        int index = InitVariable.LIST_USER_LOGIN.indexOf(new UserLogin(session, null));
+        UserLogin userLogin = InitVariable.LIST_USER_LOGIN.get(index);
         ArrayList<Permission> permissions = userLogin.getKh().getGroup().getPermissions();
         return permissions.contains(new Permission(6, "MANAGER_ALL_GROUP", ""));
     }

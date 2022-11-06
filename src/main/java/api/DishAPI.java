@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import api.filters.FCheckSession;
 import api.filters.FSessionManager;
 import controller.DishDAO;
+import global.InitVariable;
 import model.entity.Dish;
 import utils.JsonCustom;
 
@@ -24,7 +25,7 @@ public class DishAPI extends HttpServlet{
         req.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json;charset=UTF-8");
         String url = req.getRequestURI();
-        String host = "/quanlynhahangapi";
+        String host = InitVariable.HOST;
         if(url.equals(host+"/service/get_list_dish")){
             getListDish(req,resp);
         }else if(url.equals(host+"/service/add_dishs")){

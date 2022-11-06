@@ -29,7 +29,7 @@ public class CustomerAPI extends HttpServlet{
         req.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json;charset=UTF-8");
         String url = req.getRequestURI();
-        String host = "/quanlynhahangapi";
+        String host = InitVariable.HOST;
         if(url.equals(host+"/login/customer")){
             customerLogin(req,resp);
         }else if(url.equals(host+"/register/customer")){
@@ -78,7 +78,7 @@ public class CustomerAPI extends HttpServlet{
                 writer.close();
                 return;
             }
-            newUser.setSession(generateSession(InitVariable.ListUserLogin));
+            newUser.setSession(generateSession(InitVariable.LIST_USER_LOGIN));
             writeUserLogIn(newUser);
             resp1.put("code",200);
             resp1.put("description", "Đăng nhập thành công");
@@ -100,10 +100,10 @@ public class CustomerAPI extends HttpServlet{
         return true;
     }
     private boolean addUserToListUserLogin(UserLogin newUser){
-        if(InitVariable.ListUserLogin.size() >= InitVariable.lengthListUserLogin){// qua gioi hang bo nho he thong
+        if(InitVariable.LIST_USER_LOGIN.size() >= InitVariable.USER_LOGIN_NUMBER){// qua gioi hang bo nho he thong
             return false;
         }
-        InitVariable.ListUserLogin.add(newUser);
+        InitVariable.LIST_USER_LOGIN.add(newUser);
         return true;
     }
     private String generateSession(ArrayList<UserLogin> listUserLogin){
@@ -195,6 +195,6 @@ public class CustomerAPI extends HttpServlet{
         writer.close();
     }
     private boolean logout(String session){
-        return InitVariable.ListUserLogin.remove(new UserLogin(session,null));
+        return InitVariable.LIST_USER_LOGIN.remove(new UserLogin(session,null));
     }
 }

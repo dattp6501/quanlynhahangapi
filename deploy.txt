@@ -1,0 +1,2 @@
+heroku war:deploy E:\workspace\website\quanlynhahangapi\target\quanlynhahangapi.war --app restaurentdattpapi
+https://restaurentdattpapi.herokuapp.com/

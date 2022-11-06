@@ -6,7 +6,7 @@ import global.InitVariable;
 
 public class UserLogin {
     private String session;
-    private long time = new Date().getTime() + InitVariable.time;
+    private long time = new Date().getTime() + InitVariable.TIME;
     private Customer kh;
     public UserLogin(String session, Customer kh) {
         this.session = session;

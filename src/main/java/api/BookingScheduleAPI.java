@@ -32,7 +32,7 @@ public class BookingScheduleAPI extends HttpServlet{
         req.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json;charset=UTF-8");
         String url = req.getRequestURI();
-        String host = "/quanlynhahangapi";
+        String host = InitVariable.HOST;
         if(url.equals(host+"/service/get_booking_schedule")){
             getBookingSchedule(req,resp);
         }else if(url.equals(host+"/service/add_booking_schedule")){
@@ -312,8 +312,8 @@ public class BookingScheduleAPI extends HttpServlet{
     }
     private Customer checkCustomer(String session){
         UserLogin u = new UserLogin(session, new Customer());
-        int index = InitVariable.ListUserLogin.indexOf(u);
-        u = InitVariable.ListUserLogin.get(index);
+        int index = InitVariable.LIST_USER_LOGIN.indexOf(u);
+        u = InitVariable.LIST_USER_LOGIN.get(index);
         return u.getKh();
     }
 }

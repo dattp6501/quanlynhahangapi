@@ -25,7 +25,7 @@ public class MemberAPI extends HttpServlet{
         req.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json;charset=UTF-8");
         String url = req.getRequestURI();
-        String host = "/quanlynhahangapi";
+        String host = InitVariable.HOST;
         if(url.equals(host+"/profile/member")){
             getProfile(req,resp);
         }
@@ -63,8 +63,8 @@ public class MemberAPI extends HttpServlet{
             //lay thong tin thanh vien trong danh sach user dang dang nhap tren server
             Member member = new Member();
             UserLogin user = new UserLogin(session,null);
-            int index = InitVariable.ListUserLogin.indexOf(user);
-            UserLogin userLogin = InitVariable.ListUserLogin.get(index);
+            int index = InitVariable.LIST_USER_LOGIN.indexOf(user);
+            UserLogin userLogin = InitVariable.LIST_USER_LOGIN.get(index);
             member.setId(userLogin.getKh().getId());
             // lay  nhom cua user
             memdao.checkGroup(member);

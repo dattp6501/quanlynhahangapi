@@ -33,7 +33,6 @@ create table thoigiantrong(
     foreign key(banid) references ban(id)
 );
 alter table thoigiantrong auto_increment = 1;
-alter table ban add foreign key(thoigiantrongid) references thoigiantrong(id);
 
 create table mon(
 	id integer primary key auto_increment,
@@ -86,7 +85,7 @@ create table bandat(
     banid integer not null,
     lichdatid integer not null,
     foreign key(banid) references ban(id),
-    foreign key(lichdat) references lichdat(id)
+    foreign key(lichdatid) references lichdat(id)
 );
 alter table bandat auto_increment = 1;
 
