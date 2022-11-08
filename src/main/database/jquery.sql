@@ -69,6 +69,7 @@ insert into quyen(ten,mota) values('MANAGER_DISH','');
 insert into quyen(ten,mota) values('MANAGER_USER','');
 insert into quyen(ten,mota) values('MANAGER_GROUP','');
 insert into quyen(ten,mota) values('MANAGER_ALL_GROUP','');
+insert into quyen(ten,mota) values('SYSTEM','');
 
 delete from quyen where id = ?;
 -- add permission for group
@@ -82,6 +83,7 @@ insert into quyennhom(nhomid,quyenid) values(2,3);
 insert into quyennhom(nhomid,quyenid) values(2,4);
 insert into quyennhom(nhomid,quyenid) values(2,5);
 insert into quyennhom(nhomid,quyenid) values(2,6);
+insert into quyennhom(nhomid,quyenid) values(2,8);
 -- member in group
 insert into thanhviennhom(thanhvienid,nhomid) values(?,?);
 update thanhviennhom

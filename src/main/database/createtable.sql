@@ -148,5 +148,12 @@ create table quyennhom(
 );
 alter table quyennhom auto_increment = 1;
 
+create table admin(
+	id integer primary key,
+    diachi nvarchar(255),
+    sdt varchar(12) unique,
+    foreign key(id) references thanhvien(id)
+);
+
 
 

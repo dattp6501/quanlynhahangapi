@@ -3,6 +3,7 @@ controller\BookingScheduleDAO.class
 controller\DishDAO.class
 utils\ImageCustom.class
 global\InitVariable.class
+api\filters\FsessionAdmin.class
 controller\MemberDAO.class
 model\entity\TableBooking.class
 controller\PermissionGroupDAO.class
@@ -18,6 +19,7 @@ controller\PermissionDAO.class
 controller\GroupDAO.class
 api\admin\RemovePermissionGroupAPI.class
 model\entity\Permission.class
+api\filters\FCORS.class
 model\entity\Table.class
 utils\JsonCustom.class
 controller\FreeTimeDAO.class
@@ -26,15 +28,19 @@ api\TableAPI.class
 api\filters\FCheckSession.class
 controller\TableBookingDAO.class
 api\DishAPI.class
+model\entity\Admin.class
 model\entity\Customer.class
 model\entity\Dish.class
 api\admin\AddPermissionAPI.class
 controller\MemberGroupDAO.class
 api\MemberAPI.class
 controller\BookingDishDAO.class
+model\entity\AdminLogin.class
 api\filters\FSessionManager.class
 model\entity\GroupPermission.class
 model\entity\UserLogin.class
 controller\TableDAO.class
 model\entity\MemberGroup.class
+controller\AdminDAO.class
+api\AdminAPI.class
 controller\GroupPermissionDAO.class

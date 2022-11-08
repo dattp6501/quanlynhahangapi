@@ -16,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import api.filters.FCheckSession;
 import api.filters.FSessionManager;
+import controller.FreeTimeDAO;
 import controller.TableDAO;
 import global.InitVariable;
 import model.entity.Table;
@@ -23,7 +24,7 @@ import model.entity.FreeTime;
 import utils.JsonCustom;
 
 
-@WebServlet(urlPatterns = {"/service/get_free_table","/service/add_tables","/service/get_all_table"})
+@WebServlet(urlPatterns = {"/service/get_free_table","/service/add_tables","/service/get_all_table","/admin/reset_free_time_tables"})
 public class TableAPI extends HttpServlet{
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -37,6 +38,8 @@ public class TableAPI extends HttpServlet{
             addTables(req,resp);
         }else if(url.equals(host+"/service/get_all_table")){
             getAllTable(req,resp);
+        }else if(url.equals(host+"/admin/reset_free_time_tables")){
+            resetFreeTimeTables(req,resp);
         }
     }
     //--------------------------------get free table------------------------------------
@@ -279,6 +282,64 @@ public class TableAPI extends HttpServlet{
             //     jsonTable.put("free_times", listFT);
             //     result.put(jsonTable);
             // }
+            jsonResp.put("code",200);
+            jsonResp.put("description","thành công");
+            // jsonResp.put("result", result);
+        } catch (Exception e) {
+            jsonResp.put("code",300);
+            jsonResp.put("description",e.getMessage());
+        }
+        writer.print(jsonResp);
+        writer.close();
+    }
+
+    private void resetFreeTimeTables(HttpServletRequest req, HttpServletResponse resp) throws IOException{
+        PrintWriter writer = resp.getWriter();
+        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+        JSONObject jsonResp = new JSONObject();
+        try {
+            String session = objReq.getString("session");
+            int ok = FCheckSession.SessionFilter(session);
+            if(ok == 0){
+                jsonResp.put("code",300);
+                jsonResp.put("description","chưa đăng nhập");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
+            if(ok == 2){
+                jsonResp.put("code",700);
+                jsonResp.put("description","Hết phiên đăng nhập");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
+            if(!FSessionManager.FCheckSessionManager(session)){
+                jsonResp.put("code",500);
+                jsonResp.put("description","không dủ quyền");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
+            // add list table to database
+            FreeTimeDAO FTDAO = new FreeTimeDAO();
+            if(!FTDAO.connect()){
+                jsonResp.put("code",300);
+                jsonResp.put("description","không kết nối được CSDL");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
+            TableDAO tDAO = new TableDAO();
+            tDAO.setConnection(FTDAO.getConnection());
+            ArrayList<Table> tables = tDAO.getAllTable("",-1);
+            if(!FTDAO.reset(tables)){
+                jsonResp.put("code",500);
+                jsonResp.put("description","không reset được");
+                writer.print(jsonResp);
+                writer.close();
+                return;
+            }
             jsonResp.put("code",200);
             jsonResp.put("description","thành công");
             // jsonResp.put("result", result);
