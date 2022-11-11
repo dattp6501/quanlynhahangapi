@@ -15,13 +15,14 @@ public class DishDAO extends DAO{
 
     private boolean add(Dish dish) throws SQLException{
         boolean ok = false;
-        String insert = "insert into mon(ten,gia,size,anh,mota) values(?,?,?,?,?)";
+        String insert = "insert into mon(ten,gia,size,anh,soluong,mota) values(?,?,?,?,?,?)";
         PreparedStatement ps = connection.prepareStatement(insert,Statement.RETURN_GENERATED_KEYS);
         ps.setString(1, dish.getTen());
         ps.setFloat(2, (float)dish.getGia());
         ps.setString(3, dish.getSize());
         ps.setBytes(4, ImageCustom.Base64ToBytes(dish.getAnh()));
-        ps.setString(5, dish.getMota());
+        ps.setInt(5, dish.getNumber());
+        ps.setString(6, dish.getMota());
         ps.executeUpdate();
         ResultSet res = ps.getGeneratedKeys();
         if(res.next()){

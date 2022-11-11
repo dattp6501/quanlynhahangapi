@@ -41,9 +41,10 @@ public class CustomerAPI extends HttpServlet{
     //-----------------------------------login-------------------------
     private void customerLogin(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         PrintWriter writer = resp.getWriter();
-        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         JSONObject resp1 = new JSONObject();
         try {
+            JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String usenname = objReq.getString("tendangnhap");
             String password = objReq.getString("matkhau");
             Customer customer = new Customer(usenname,password,null,-1,null,null,null);
@@ -121,9 +122,10 @@ public class CustomerAPI extends HttpServlet{
     //---------------------------------------register----------------------------
     private void customerRegister(HttpServletRequest req, HttpServletResponse resp) throws JSONException, IOException{
         PrintWriter writer = resp.getWriter();
-        JSONObject objReq =new JSONObject(JsonCustom.JsonToString(req.getReader()).toString());
         JSONObject resp1 = new JSONObject();
         try {
+            JSONObject objReq = new JSONObject(JsonCustom.JsonToString(req.getReader()).toString());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String fullname = objReq.getString("tendaydu");
             String username = objReq.getString("tendangnhap");
             String password = objReq.getString("matkhau");
@@ -159,9 +161,10 @@ public class CustomerAPI extends HttpServlet{
     //-----------------------------------------logout----------------------------------
     private void customerLogout(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         PrintWriter writer = resp.getWriter();
-        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         JSONObject resp1 = new JSONObject();
         try {
+            JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String session = objReq.getString("session");
             int ok = FCheckSession.SessionFilter(session);
             if(ok==0){

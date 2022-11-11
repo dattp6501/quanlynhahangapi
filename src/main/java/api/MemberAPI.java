@@ -34,8 +34,9 @@ public class MemberAPI extends HttpServlet{
     private void getProfile(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         PrintWriter writer = resp.getWriter();
         JSONObject resp1 = new JSONObject();
-        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         try {
+            JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String session = objReq.getString("session");
             int ok = FCheckSession.SessionFilter(session);
             if(ok==0){

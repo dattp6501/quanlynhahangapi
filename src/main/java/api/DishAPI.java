@@ -37,9 +37,10 @@ public class DishAPI extends HttpServlet{
     //---------------------------get list dish------------------
     private void getListDish(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         PrintWriter writer = resp.getWriter();
-        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         JSONObject jsonResp = new JSONObject();
         try {
+            JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String session = objReq.getString("session");
             int ok = FCheckSession.SessionFilter(session);
             if(ok==0){
@@ -95,9 +96,10 @@ public class DishAPI extends HttpServlet{
     //=============================     ADMIN        ========================
     private void addDishs(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         PrintWriter writer = resp.getWriter();
-        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         JSONObject jsonResp = new JSONObject();
         try {
+            JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String session = objReq.getString("session");
             int ok = FCheckSession.SessionFilter(session);
             if(ok==0){
@@ -131,10 +133,12 @@ public class DishAPI extends HttpServlet{
                 String anhBase64 = null;
                 try {
                     anhBase64 = ((JSONObject) jsonD).getString("image_dish");
+                    if(anhBase64.equals("")) anhBase64 = null;
                 } catch (Exception e) {
                 }
+                int number = ((JSONObject) jsonD).getInt("number_dish");
                 String note = ((JSONObject) jsonD).getString("note");
-                Dish dish = new Dish(name, note, sizes, price, anhBase64, -1);
+                Dish dish = new Dish(-1, name, number, sizes, price, anhBase64, note);
                 listD.add(dish);
             }
             //add list dish data base
@@ -165,9 +169,10 @@ public class DishAPI extends HttpServlet{
     }
     private void updateDishs(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         PrintWriter writer = resp.getWriter();
-        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         JSONObject jsonResp = new JSONObject();
         try {
+            JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String session = objReq.getString("session");
             int ok = FCheckSession.SessionFilter(session);
             if(ok==0){
@@ -203,9 +208,10 @@ public class DishAPI extends HttpServlet{
                     anhBase64 = ((JSONObject) jsonD).getString("image_dish");
                 } catch (Exception e) {
                 }
+                int number = ((JSONObject) jsonD).getInt("number_dish");
                 String note = ((JSONObject) jsonD).getString("note");
                 int id = ((JSONObject) jsonD).getInt("id_dish");
-                Dish dish = new Dish(name, note, sizes, price, anhBase64, id);
+                Dish dish = new Dish(id, name, number, sizes, price, anhBase64, note);
                 listD.add(dish);
             }
             //add list dish data base

@@ -44,9 +44,10 @@ public class BookingScheduleAPI extends HttpServlet{
     //-----------------------------------add booking schedule-----------------
     private void addBookingSchedule(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         PrintWriter writer = resp.getWriter();
-        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         JSONObject jsonResp = new JSONObject();
         try {
+            JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String session = objReq.getString("session");
             int ok = FCheckSession.SessionFilter(session);
             if(ok==0){
@@ -136,9 +137,10 @@ public class BookingScheduleAPI extends HttpServlet{
 
     private void updateBookingSchedule(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         PrintWriter writer = resp.getWriter();
-        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         JSONObject jsonResp = new JSONObject();
         try {
+            JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String session = objReq.getString("session");
             int ok = FCheckSession.SessionFilter(session);
             if(ok==0){
@@ -228,9 +230,10 @@ public class BookingScheduleAPI extends HttpServlet{
     //--------------------------------------------get booking schedule---------------------
     private void getBookingSchedule(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         PrintWriter writer = resp.getWriter();
-        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         JSONObject jsonResp = new JSONObject();
         try {
+            JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String session = objReq.getString("session");
             int ok = FCheckSession.SessionFilter(session);
             if(ok==0){

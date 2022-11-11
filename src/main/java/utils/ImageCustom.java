@@ -21,4 +21,7 @@ public class ImageCustom {
     public static byte[] Base64ToBytes(String base64){
         return Base64.getDecoder().decode(base64);
     }
+    public static void main(String[] args) throws IOException {
+        System.out.println(ImageCustom.toStringBase64("C:\\Users\\Administrator\\Downloads\\conan.jpg"));
+    }
 }

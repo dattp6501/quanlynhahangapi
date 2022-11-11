@@ -45,9 +45,10 @@ public class TableAPI extends HttpServlet{
     //--------------------------------get free table------------------------------------
     private void getFreeTable(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         PrintWriter writer = resp.getWriter();
-        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         JSONObject jsonResp = new JSONObject();
         try {
+            JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String session = objReq.getString("session");
             int ok = FCheckSession.SessionFilter(session);
             if(ok == 0){
@@ -120,9 +121,10 @@ public class TableAPI extends HttpServlet{
     //--------------------------------get all table------------------------------------
     private void getAllTable(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         PrintWriter writer = resp.getWriter();
-        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         JSONObject jsonResp = new JSONObject();
         try {
+            JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String session = objReq.getString("session");
             int ok = FCheckSession.SessionFilter(session);
             if(ok == 0){
@@ -192,9 +194,10 @@ public class TableAPI extends HttpServlet{
     //=========================   ADMIN    ======================
     private void addTables(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         PrintWriter writer = resp.getWriter();
-        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         JSONObject jsonResp = new JSONObject();
         try {
+            JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String session = objReq.getString("session");
             int ok = FCheckSession.SessionFilter(session);
             if(ok == 0){
@@ -295,9 +298,10 @@ public class TableAPI extends HttpServlet{
 
     private void resetFreeTimeTables(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         PrintWriter writer = resp.getWriter();
-        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         JSONObject jsonResp = new JSONObject();
         try {
+            JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String session = objReq.getString("session");
             int ok = FCheckSession.SessionFilter(session);
             if(ok == 0){

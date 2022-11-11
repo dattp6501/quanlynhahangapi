@@ -30,9 +30,10 @@ public class AdminAPI extends HttpServlet{
     }
     private void removeAllUser(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         PrintWriter writer = resp.getWriter();
-        JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
         JSONObject jsonResp = new JSONObject();
         try {
+            JSONObject objReq = JsonCustom.toJsonObject(req.getReader());
+            System.out.println("REQUEST DATA: " + objReq.toString());
             String session = objReq.getString("session");
             int ok = FCheckSession.SessionFilter(session);
             if(ok==0){
